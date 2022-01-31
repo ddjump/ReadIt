@@ -17,7 +17,7 @@ class ViewController: UIViewController {
     }
     
     private func request(subredditName: String) {
-        guard let url = URL(string: "https://www.reddit.com/r/\(subredditName).json?limit=1") else { return }
+        guard let url = URL(string: "https://www.reddit.com/r/\(subredditName).json?limit=5") else { return }
         var request = URLRequest(url: url)
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         
@@ -29,11 +29,17 @@ class ViewController: UIViewController {
                   }
             
             if (200...299).contains(response.statusCode) {
-                print(response)
-                print(data)
+                do {
+                    let decoder = JSONDecoder()
+                    let jsonResponse = try decoder.decode(SubredditResponse.self, from: data)
+                    print(jsonResponse)
+                }
+                catch {
+                    print("Error")
+                }
             }
-            let responseString = String(data: data, encoding: .utf8)
-            print("responseString = \(String(describing: responseString))")
+//            let responseString = String(data: data, encoding: .utf8)
+//            print("responseString = \(String(describing: responseString))")
         }
         task.resume()
     }
